@@ -1,0 +1,60 @@
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib.ticker as mticker
+
+file_path = "C:/Users/INDIA/Downloads/demo dataset.xlsx"
+df = pd.read_csv("C:/Users/INDIA/Downloads/demo dataset.csv")
+
+file_path = "C:/Users/INDIA/Downloads/demo dataset.xlsx"
+csv_path = "C:/Users/INDIA/Downloads/demo dataset.csv"
+
+if not os.path.exists(file_path):
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError("File not found!")
+
+
+df = pd.read_csv(csv_path)
+
+Session_column = "Session_Duration (hours)"
+Calorie_column = "Calories_Burned"
+
+if Session_column not in df.columns:
+    raise KeyError(f"Missing column: {Session_column}")
+
+df = df[["Session_Duration (hours)", "Calories_Burned"]].dropna()
+if Session_column not in df.columns or Calorie_column not in df.columns:
+    raise KeyError(f"Missing column: {Session_column} or {Calorie_column}")
+
+df = df[[Session_column, Calorie_column]].dropna()
+df = df.sort_values(by=Calorie_column, ascending=True)
+
+if df.empty:
+    raise ValueError("No valid data found!")
+
+plt.figure(figsize=(15, 6))
+
+
+sns.kdeplot(x=df[Session_column], color='Blue', linewidth=2)
+print(df)
+
+sns.kdeplot(x=df[Session_column], color='Lightblue', fill=True, alpha=0.5, clip=(0.25, 1.0))  # Below 60 kg (Blue)
+sns.kdeplot(x=df[Session_column], color='Lightgreen', fill=True, alpha=0.5, clip=(1.0, 1.5))  # 60-100 kg (Green)
+sns.kdeplot(x=df[Session_column], color='Pink', fill=True, alpha=0.5, clip=(1.5, 2.25))  # Above 100 kg (Orange)
+sns.kdeplot(x=df[Session_column], color='Blue', linewidth=2, common_norm=False)
+
+sns.kdeplot(x=df[Session_column], color='Lightblue', fill=True, alpha=0.5, clip=(0.25, 1.0))
+sns.kdeplot(x=df[Session_column], color='Lightgreen', fill=True, alpha=0.5, clip=(1.0, 1.5))
+sns.kdeplot(x=df[Session_column], color='Pink', fill=True, alpha=0.5, clip=(1.5, 2.25))
+
+plt.xlabel("Session_duration (hours)")
+plt.ylabel("Calorie_burned")
+plt.title("calories burned depending upon session duration")
+plt.xlabel("Session Duration (hours)")
+plt.ylabel("Calories Burned")
+plt.title("Calories Burned Depending on Session Duration")
+
+plt.gca().yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f'{int(x * 1000)}'))
+
+plt.show()
